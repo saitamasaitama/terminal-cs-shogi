@@ -3,38 +3,43 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
-
-public struct Koma{
-  public int Owner;
-  public int KomaClass;
-  public pos position;
-}
 public class Shogi{
   Dictionary<pos,Koma> board=new Dictionary<pos,Koma>();
   public delegate void renderEventHandler(pos offset);
   public delegate void ShogiRenderEventHandler(Object sender);
+  public delegate void KomaRenderEventHandler(Koma k);
   public delegate void GrobalEventHandler();
   public event renderEventHandler renderEvent;
   public event GrobalEventHandler renderBoardEvent;
-  public event renderEventHandler komaRenderEvent;
+  public event KomaRenderEventHandler renderKomaEvent;
 
   private pos cursor=pos.From(5,1);
   public pos size = pos.From(9,9);
 
 
   public void initialize(){ 
-//board initialize
+    //board initialize
   }
 
   public void Run(){
     Console.CancelKeyPress+=(object sender, ConsoleCancelEventArgs e)=>{
       Console.ResetColor();
     };
+
+
     Console.Clear();
     Console.ResetColor();
+
+    //駒追加
+    var komas=Koma.DefaultSet;
+
+
     renderBoardEvent();
-    //renderEvent(pos.From(0,0));
-    //event sets all
+    foreach(Koma k in komas){
+      Console.Write(k);
+    }
+
+
     this.keyLoop();
   }
 
@@ -52,10 +57,10 @@ public class Shogi{
     if(
         !( 
           new List<ConsoleKey>(){
-            ConsoleKey.UpArrow,
-            ConsoleKey.DownArrow,
-            ConsoleKey.LeftArrow,
-            ConsoleKey.RightArrow
+          ConsoleKey.UpArrow,
+          ConsoleKey.DownArrow,
+          ConsoleKey.LeftArrow,
+          ConsoleKey.RightArrow
           }
          ).Exists(a=> a==k.Key )
       )
@@ -64,7 +69,7 @@ public class Shogi{
     }
     return k.Modifiers switch{
       0 =>this.SimpleAllowControl(k.Key),
-      _ =>false
+        _ =>false
     };
   }
   private bool SimpleAllowControl(ConsoleKey key){

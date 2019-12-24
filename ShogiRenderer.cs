@@ -8,6 +8,7 @@ using System.Collections.Generic;
 */
 public class ShogiRenderer{
   public pos offset=pos.From(0,2);
+  //
   private void Blit(pos p,string[] lines){
     Console.SetCursorPosition(p.x,p.y);
   }
@@ -44,14 +45,15 @@ public class ShogiRenderer{
   //  --  |歩|
   // |歩|  --
 
-  public void RenderKoma(pos p){
-    Console.Write("A");
+  public void RenderKoma(Koma k){
+    Console.Write("|  |");
   }
 
   public static void CreateFromShogi(Shogi s){
     ShogiRenderer renderer=new ShogiRenderer();
 
     s.renderBoardEvent+=renderer.RenderBoard;
+    s.renderKomaEvent+=renderer.RenderKoma;
 
 
   }
