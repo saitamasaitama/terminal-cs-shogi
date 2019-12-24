@@ -34,6 +34,95 @@ public struct Koma{
   public TypeKomaClass klass;
   public pos position;
 
+  //駒自体の動ける範囲
+  public pos[] Movables=>this.klass switch{
+    TypeKomaClass.OU=>this.MoveOu,
+    TypeKomaClass.KIN=>this.MoveKin,
+    TypeKomaClass.FU=>
+    this.nari switch{
+      TypeNari.NARAZU=>this.MoveFu,
+      TypeNari.NARI=>this.MoveKin,
+    },
+    TypeKomaClass.GIN=>
+    this.nari switch{
+      TypeNari.NARAZU=>this.MoveGin,
+      TypeNari.NARI=>this.MoveKin,
+    },
+    TypeKomaClass.KEIMA=>
+    this.nari switch{
+      TypeNari.NARAZU=>this.MoveKeima,
+      TypeNari.NARI=>this.MoveKin,
+    },
+    TypeKomaClass.KYOSHA=>
+    this.nari switch{
+      TypeNari.NARAZU=>this.MoveKyosha,
+      TypeNari.NARI=>this.MoveKin,
+    },
+    TypeKomaClass.HISYA=>
+    this.nari switch{
+      TypeNari.NARAZU=>this.MoveHisya,
+      TypeNari.NARI=>this.MoveKin,
+    },
+    TypeKomaClass.KAKU=>
+    this.nari switch{
+      TypeNari.NARAZU=>this.MoveKaku,
+      TypeNari.NARI=>this.MoveKin,
+    },
+    _ => this.MoveFu
+  };
+
+  private pos[] MoveKin=>new pos[]{
+    pos.From(-1,0),
+    pos.From(1,0),
+
+    pos.From(-1,1),
+    pos.From(0,1),
+    pos.From(1,1),
+
+    pos.From(0,-1)
+  };
+  private pos[] MoveGin=>new pos[]{
+    pos.From(-1,1),
+    pos.From(1,1),
+    pos.From(0,1),
+
+    pos.From(-1,-1),
+    pos.From(1,-1),
+  };
+
+  private pos[] MoveFu=>new pos[]{
+    pos.From(0,1),
+  };
+
+  private pos[] MoveKyosha=>new pos[]{
+    pos.From(0,1)
+  };
+  private pos[] MoveKeima=>new pos[]{
+    pos.From(1,2),
+    pos.From(-1,2),
+  };
+  private pos[] MoveHisya=>new pos[]{
+    pos.From(1,0),
+    pos.From(-1,0),
+    pos.From(0,1),
+    pos.From(0,1),
+  };
+  private pos[] MoveKaku=>new pos[]{
+    pos.From(1,1),
+    pos.From(-1,1),
+    pos.From(1,-1),
+    pos.From(-1,-1),
+  };
+  private pos[] MoveOu=>new pos[]{
+    pos.From(1,1),
+    pos.From(-1,1),
+    pos.From(1,-1),
+    pos.From(-1,-1),
+    pos.From(1,0),
+    pos.From(-1,0),
+    pos.From(0,1),
+    pos.From(0,1),
+  };
 
   public static Koma N(TypeOwner own,TypeKomaClass koma,int index=0)
     =>new Koma(){
@@ -126,7 +215,6 @@ public struct Koma{
       Koma.N(TypeOwner.OU,TypeKomaClass.KEIMA,1),
       Koma.N(TypeOwner.OU,TypeKomaClass.KYOSHA,1),
 
-
       //相手
       Koma.N(TypeOwner.GYOKU,TypeKomaClass.FU,0),
       Koma.N(TypeOwner.GYOKU,TypeKomaClass.FU,1),
@@ -150,7 +238,6 @@ public struct Koma{
       Koma.N(TypeOwner.GYOKU,TypeKomaClass.GIN,1),
       Koma.N(TypeOwner.GYOKU,TypeKomaClass.KEIMA,1),
       Koma.N(TypeOwner.GYOKU,TypeKomaClass.KYOSHA,1)
-
   };
 }
 
