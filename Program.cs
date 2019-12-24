@@ -2,29 +2,18 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public struct pos{
-  public int x;
-  public int y;
-  public static pos From(int x,int y){
-    return new pos(){
-      x=x,y=y
-    };
-  }
-  public static pos operator +(pos A,pos B){
-    return new pos(){
-      x=A.x+B.x,y=A.y+B.y
-    };
-  }
-}
-
 
 class Program
 {
   static void Main(string[] args)
   {
     //初期化
-    var edit=Editor.Create();
-    edit.Run();
+    var shogi=Shogi.Create();
+    //レンダラ初期化
+    ShogiRenderer.CreateFromShogi(shogi);
+    shogi.Run();
+
+
 
 
   }
