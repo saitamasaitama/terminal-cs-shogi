@@ -32,13 +32,14 @@ public class Shogi{
 
     //駒追加
     var komas=Koma.DefaultSet;
-
+    foreach(Koma k in komas){
+      board.Add(k.position,k);
+    }
 
     renderBoardEvent();
     foreach(Koma k in komas){
-      Console.Write(k);
+      renderKomaEvent(k);
     }
-
 
     this.keyLoop();
   }
