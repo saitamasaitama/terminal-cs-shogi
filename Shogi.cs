@@ -3,56 +3,36 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
+public enum TypePlayer{
+  CPU,
+  PLAYER
+}
+
+
+public class Player{
+  public TypeOwner owner;
+  public TypePlayer player;
+  public List<Koma> Komas=new List<Koma>();
+
+}
+
+/**
+ * 実質コントロールクラスになっている
+ *
+ * */
 public class Shogi{
   Dictionary<pos,Koma> board=new Dictionary<pos,Koma>();
-  public delegate void renderEventHandler(pos offset);
-  public delegate void ShogiRenderEventHandler(Object sender);
-  public delegate void KomaRenderEventHandler(Koma k);
-  public delegate void GrobalEventHandler();
-  public event renderEventHandler renderEvent;
-  public event GrobalEventHandler renderBoardEvent;
-  public event KomaRenderEventHandler renderKomaEvent;
 
-  private pos cursor=pos.From(5,1);
-  public pos size = pos.From(9,9);
+  public Koma[] Komas=>board.Values.ToArray();
 
-
-  public void initialize(){ 
-    //board initialize
-  }
-
-  public void Run(){
-    Console.CancelKeyPress+=(object sender, ConsoleCancelEventArgs e)=>{
-      Console.ResetColor();
-    };
-
-
-    Console.Clear();
-    Console.ResetColor();
-
+  private Shogi(){
     //駒追加
     var komas=Koma.DefaultSet;
     foreach(Koma k in komas){
       board.Add(k.position,k);
     }
-
-    renderBoardEvent();
-    foreach(Koma k in komas){
-      renderKomaEvent(k);
-    }
-
-    this.keyLoop();
   }
 
-  private void keyLoop(){
-    while(true){
-      var k = Console.ReadKey(true);
-      //      Console.Write(k.Key);
-
-      var r=AllowControll(k);
-      UpdateStatus();  //ステータス表示更新
-    }
-  }
 
   private bool AllowControll(ConsoleKeyInfo k){
     if(
@@ -66,28 +46,37 @@ public class Shogi{
          ).Exists(a=> a==k.Key )
       )
     {
+      //次に
       return false;
     }
+
     return k.Modifiers switch{
       0 =>this.SimpleAllowControl(k.Key),
         _ =>false
     };
   }
+
+
   private bool SimpleAllowControl(ConsoleKey key){
+    //スクロールは一次元
     return true;
   } 
 
+  /*
+   * これは必要ない
+   * */
   public void UpdateStatus(){
     Console.SetCursorPosition(
         Console.BufferWidth-10,
         Console.BufferHeight-1
         );
-    Console.Write($"{cursor.x,3}:{cursor.y,3}");
+//    Console.Write($"{cursor.x,3}:{cursor.y,3}");
   }
 
-  public static Shogi Create(){
+  //ShogiControllerインスタンスが生成される
+  public static ShogiController Create(){
 
-    return new Shogi();
+    return ShogiController.FromShogi(new Shogi());
   }
 }
 

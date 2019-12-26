@@ -66,7 +66,7 @@ public class ShogiRenderer{
     k.owner);
   }
 
-  public static void CreateFromShogi(Shogi s){
+  public static void CreateFromShogi(ShogiController s){
     ShogiRenderer renderer=new ShogiRenderer();
 
     s.renderBoardEvent+=renderer.RenderBoard;
