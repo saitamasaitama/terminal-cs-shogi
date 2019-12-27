@@ -51,15 +51,12 @@ public class ShogiController{
   public event GrobalEventHandler renderBoardEvent;
   public event KomaRenderEventHandler renderKomaEvent;
   public event KomaSelectEventHandler selectKomaEvent;
-
   //メニュー
-  private SingleMenu menu;
-  
-
+  private SingleMenu<Koma> menu;
   public pos size = pos.From(9,9);
-
   public void Run(){
     Console.CancelKeyPress+=(object sender, ConsoleCancelEventArgs e)=>{
+      Console.Clear();
       Console.ResetColor();
     };
     Console.Clear();
@@ -70,9 +67,11 @@ public class ShogiController{
       renderKomaEvent(k);
     }
     //メニュー初期化
-    menu=new SingleMenu();
-    foreach(Koma k in shogi.Komas){
-      menu.Add(Menu.From(k.ToLogo(),()=>
+    menu=new SingleMenu<Koma>();
+    foreach(Koma k in shogi.Komas.Where(k=>k.owner==TypeOwner.GYOKU)){
+      menu.Add(Menu<Koma>.From(
+        $"[{k.ToLogo()}] {k.position}",
+        k,()=>
       {
         Console.Write("-OK-");
       }));
@@ -112,15 +111,18 @@ public class ShogiController{
   public void UpdateStatus(){
 
     //現在選択している駒を表示させる
-
     Console.SetCursorPosition(
         Console.BufferWidth-10,
         Console.BufferHeight-1
-        );
+     );
     Console.Write($"{cursor.x,3}:{cursor.y,3}");
-    Console.SetCursorPosition(2,Console.BufferHeight-1);
-    Console.Write(menu.Current);
 
+
+    //実質renderer
+    Console.SetCursorPosition(2,Console.BufferHeight-1);
+    Console.Write(menu.Current.label);
+    //コマ描画
+    selectKomaEvent(menu.Current.Item);
   }
 
   private ShogiController(Shogi s){

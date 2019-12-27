@@ -7,6 +7,8 @@ using System.Collections.Generic;
 コンソール描画はこのクラスでのみ行う
 */
 public class ShogiRenderer{
+  public Koma? lastSelectComa=null;
+
   public pos offset=pos.From(0,2);
   //
   private void Blit(pos p,string[] lines){
@@ -59,6 +61,7 @@ public class ShogiRenderer{
   // |歩|  --
 
   public void RenderKoma(Koma k){
+
     this.BlitOwn(k.position,new string[]{
       " -- ",
      $"|{k.ToLogo()}|"
@@ -66,11 +69,27 @@ public class ShogiRenderer{
     k.owner);
   }
 
+  public void RenderSelectKoma(Koma k){
+
+    //last選択コマはクリア
+    if(this.lastSelectComa!=null){
+      Console.ResetColor();
+      RenderKoma(this.lastSelectComa.Value);
+    }
+    this.lastSelectComa=k;
+
+    Console.BackgroundColor=ConsoleColor.DarkBlue;
+    RenderKoma(k);
+    Console.ResetColor();
+  }
+
+  //イベントを設定
   public static void CreateFromShogi(ShogiController s){
     ShogiRenderer renderer=new ShogiRenderer();
 
     s.renderBoardEvent+=renderer.RenderBoard;
     s.renderKomaEvent+=renderer.RenderKoma;
+    s.selectKomaEvent+=renderer.RenderSelectKoma;
   }
 }
 

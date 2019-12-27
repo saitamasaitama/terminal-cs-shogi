@@ -15,24 +15,36 @@ public interface AllowControl{
   void RightArrow();
 }
 
-public struct Menu{
+public class KomaSelectMenu:Menu<Koma>{
+
+
+}
+
+public class Menu<T>{
   public string label;
+  public T obj;
   public MenuHandle callback;
 
-  public static Menu From(string label,MenuHandle callback)=>new Menu()
+  public virtual string Label=>label;
+
+  public static Menu<T> From(string label,T obj,MenuHandle callback)
+    =>new Menu<T>()
   {
     label=label,
+    obj=obj,
     callback=callback
   };
+
+  public T Item=>this.obj;
 
   public void Select(){
     callback();
   }
 }
 
-public class SingleMenu :List<Menu>{
+public class SingleMenu<T> :List<Menu<T>>
+{
   private int current=0;
-
   public override string ToString(){
     StringBuilder sb=new StringBuilder();
     sb.AppendLine("aaa");
@@ -40,7 +52,7 @@ public class SingleMenu :List<Menu>{
     return sb.ToString();
   }
 
-  public string Current=>this[current].label;
+  public Menu<T> Current=>this[current];
 
   //<- アイテム選択 ->
   public void Apply(TypeControlArrow a){
@@ -66,4 +78,3 @@ public class SingleMenu :List<Menu>{
     }
   } 
 }
-
