@@ -33,45 +33,20 @@ public class Shogi{
     }
   }
 
-
-  private bool AllowControll(ConsoleKeyInfo k){
-    if(
-        !( 
-          new List<ConsoleKey>(){
-          ConsoleKey.UpArrow,
-          ConsoleKey.DownArrow,
-          ConsoleKey.LeftArrow,
-          ConsoleKey.RightArrow
-          }
-         ).Exists(a=> a==k.Key )
-      )
-    {
-      //次に
-      return false;
-    }
-
-    return k.Modifiers switch{
-      0 =>this.SimpleAllowControl(k.Key),
-        _ =>false
-    };
+  public void Update(){
+    this.board=board.Values.ToDictionary(k=>k.position,v=>v);    
   }
 
+  public Koma this[pos p]=>board.ContainsKey(p)?board[p]:null;
 
-  private bool SimpleAllowControl(ConsoleKey key){
-    //スクロールは一次元
-    return true;
-  } 
-
-  /*
-   * これは必要ない
-   * */
-  public void UpdateStatus(){
-    Console.SetCursorPosition(
-        Console.BufferWidth-10,
-        Console.BufferHeight-1
-        );
-//    Console.Write($"{cursor.x,3}:{cursor.y,3}");
+  public pos[] GetMovablePositions(Koma k){
+    return 
+    k.CalcMovable
+    .Where(p=>(0<=p.x && p.x < 9)&&(0<=p.y && p.y < 9))//エリア範囲
+    .Where(p=>!board.ContainsKey(p)||board[p].owner!=k.owner)
+    .ToArray();
   }
+
 
   //ShogiControllerインスタンスが生成される
   public static ShogiController Create(){

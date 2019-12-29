@@ -9,10 +9,6 @@ class Program
   {
     //初期化
     var shogi=Shogi.Create();
-    //レンダラ初期化
-    ShogiRenderer.CreateFromShogi(shogi);
     shogi.Run();
-
-
   }
 }

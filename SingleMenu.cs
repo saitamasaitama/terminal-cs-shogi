@@ -6,18 +6,14 @@ using System.Collections.Generic;
 
 //一次元のメニュー
 //
+public delegate void OnUpdateSelectKoma(Koma k);
+
 public delegate void MenuHandle();
 
-public interface AllowControl{
-  void UpArrow();
-  void DownArrow();
-  void LeftArrow();
-  void RightArrow();
-}
-
-public class KomaSelectMenu:Menu<Koma>{
-
-
+public interface MenuControl {
+  void Enter();
+  void Escape();
+  void OnArrow(TypeControlArrow a);
 }
 
 public class Menu<T>{
@@ -28,35 +24,60 @@ public class Menu<T>{
   public virtual string Label=>label;
 
   public static Menu<T> From(string label,T obj,MenuHandle callback)
-    =>new Menu<T>()
+    =>new Menu<T>(
+    )
   {
     label=label,
     obj=obj,
     callback=callback
   };
-
   public T Item=>this.obj;
-
   public void Select(){
     callback();
   }
 }
 
-public class SingleMenu<T> :List<Menu<T>>
-{
-  private int current=0;
-  public override string ToString(){
-    StringBuilder sb=new StringBuilder();
-    sb.AppendLine("aaa");
+public class MenuListener:MenuControl{
 
-    return sb.ToString();
+  private List<MenuControl> menues=new List<MenuControl>();
+  
+  public void Enter(){
+    Current.Enter();
+  }
+  public void Escape(){
+    Current.Escape();
+  }
+  public virtual void OnArrow(TypeControlArrow a){
+    Current.OnArrow(a);
+  }
+  public MenuControl Current=>menues[0];
+
+  public MenuListener Pop(){
+    menues.RemoveAt(0);
+    return this;
   }
 
+  public static MenuListener operator +(MenuListener m,MenuControl c){
+    m.menues.Insert(0,c);
+    return m;
+  }
+}
+
+public class SingleMenu<T> :List<Menu<T>>,MenuControl
+{
+  private int current=0;
   public Menu<T> Current=>this[current];
 
-  //<- アイテム選択 ->
-  public void Apply(TypeControlArrow a){
-    
+  public SingleMenu(){
+   
+  }
+
+
+  public void Enter(){
+    this.Current.callback();
+  }
+
+  public virtual void OnArrow(TypeControlArrow a){
     switch(a){
       case TypeControlArrow.DOWN :
       case TypeControlArrow.RIGHT :
@@ -65,7 +86,6 @@ public class SingleMenu<T> :List<Menu<T>>
         }else{
           current=0;
         }
-
         break;
       case TypeControlArrow.LEFT :
       case TypeControlArrow.UP : 
@@ -76,5 +96,12 @@ public class SingleMenu<T> :List<Menu<T>>
         }
         break;
     }
-  } 
+  }
+  public void Escape(){
+  }
+
+  public static SingleMenu<T> operator + (SingleMenu<T> A,TypeControlArrow a){
+    A.OnArrow(a);
+    return A;
+  }
 }

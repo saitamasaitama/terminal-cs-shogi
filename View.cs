@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 
 //レンダリングのみを請け負うヒエラルキ
-public abstract class Obj:List<Renderer>{
+public class View:List<Renderer>{
   public Transform localTransform;
   
-  public Obj Parent;
-  public List<Obj> Children=new List<Obj>();
+  public View Parent;
+  public List<View> Children=new List<View>();
 
   //トランスフォームは親から引き継ぐ
 
@@ -20,18 +20,31 @@ public abstract class Obj:List<Renderer>{
     foreach(Renderer r in this){
       r.Render(transform);
     }
-    foreach(Obj o in Children){
+    foreach(View o in Children){
       o.Render(transform);
     }
        
   }
+  public static View operator + (View v ,Renderer r){
+    v.Add(r);
+    return v;
+  }
+
+  public View Pop(){
+    this.RemoveAt(this.Count-1);
+    return this;
+  }
+
 
 }
 //2Dのトランスフォーム
 public struct Transform{
   public int x,y,z;
   //public const Transform ZERO = default(Transform);
-
+  public static Transform ZERO=>new Transform(){
+    x=0,y=0,z=0
+  };
+  public static Transform From(int x,int y,int z)=>new Transform(){x=x,y=y,z=z};
   public static Transform operator + (Transform A,Transform B){
     return new Transform(){
       x=A.x+B.x,
